@@ -1,3 +1,4 @@
+--practica 1
 create database colegio;
 use colegio;
 
@@ -92,3 +93,127 @@ update profesor
 	where idP = 'P5';
 
 -- hacer foreign key a los id's de asistencia, actualmente estan como primary keys
+
+-- practica 2
+insert into asistencia values
+	('P8', 'A8','C8');
+-- no se ha ingresado un profesor, clase ni asignatura 8
+-- La tabla de asistencia tiene inconsistencia de datos
+
+delete from asistencia where idP='P8';
+
+alter table asistencia
+add constraint FK1 foreign key (idP) references profesor(idP);
+
+alter table asistencia
+add constraint FK2 foreign key (idA) references asignatura(idA);
+
+alter table asistencia
+add constraint FK3 foreign key (idC) references clase(idC);
+
+
+-- comprobar que las llaves foraneas funcionen
+--select * from asistencia natural join profesor, asignatura, clase;
+
+
+delete from profesor
+where idP='P1';
+--error ya que la esta usando asistencia
+--primero, borrar de asistencia P1
+
+delete from asistencia
+	where idP='P1';
+
+--volver a ingressar
+insert into asistencia values
+	('P1', 'A1','C1'),	
+	('P1', 'A2','C3');
+
+-- borrar foraneas
+alter table asistencia
+drop foreign key FK1;
+
+alter table asistencia
+drop foreign key FK2;
+
+
+alter table asistencia
+drop foreign key FK3;
+
+
+-- modificar llaves foraneas
+alter table asistencia
+add constraint FK1 foreign key (idP) references profesor(idP) on delete cascade on update cascade;
+
+alter table asistencia
+add constraint FK2 foreign key (idA) references asignatura(idA) on delete cascade on update cascade;
+
+alter table asistencia
+add constraint FK3 foreign key (idC) references clase(idC) on delete cascade on update cascade;
+
+-- borrar de profesor idP = P2
+delete from profesor
+	where idP='P2';
+
+update profesor
+	set idP='P7'
+	where idP='P1';
+
+-- que pasa si se pone on delete set null on update set null
+--									 restrict 		restrict
+--					  				no action		no action
+
+
+
+
+
+-- agregar idPAux char(3) null en asistencia, es foranea y hace referencia a profesor.idP
+-- a la foranea ponerle set null
+-- a la mitad P7
+-- a los otros P5
+-- borrar foraneas antes o despues de agregar la columna?
+
+
+alter table asistencia 
+add column idPAux char(3) null;
+
+alter table asistencia
+add constraint FK4 foreign key (idPAux) references profesor(idP) on delete set null on update set null;
+
+update asistencia
+	set idPAux = 'P7'
+	where idP = 'P7' AND 
+	idA = 'A1' AND 
+	idC = 'C1';
+
+update asistencia
+	set idPAux = 'P7'
+	where idP = 'P3';
+
+
+update asistencia
+	set idPAux = 'P7'
+	where idP = 'P4';
+
+
+update asistencia
+	set idPAux = 'P5'
+	where idP = 'P5';
+
+
+update asistencia
+	set idPAux = 'P5'
+	where idP = 'P7';
+
+
+
+--delete from profesor
+--	where idP='P2';
+
+-- que pasa si se pone on delete set null on update set null
+--									 restrict 		restrict
+--					  				no action		no action
+
+
+delete from profesor 
+	where idP='P7';
