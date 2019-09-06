@@ -1,0 +1,6 @@
+1 create database
+2 tablas not null/null
+3 restricción primary key 
+4 restricción foreign key
+5 restricción check
+6 inserción de valores en las tabla
