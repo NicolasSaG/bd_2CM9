@@ -158,8 +158,9 @@ insert into msim values
 --HACER CONSULTAS
 --encontrar los hombres que están solteros
 select * from hombre where nomh not in (select nomh from matrimonio);
+
 --encontrar parejas que se caen mutuamente simpaticos
-select hsim.nomh,hsim.nomm from hsim, msim where hsim.nomh = msim.nomh and hsim.nomm = msim.nomm;
+select hsim.nomh, hsim.nomm from hsim, msim where hsim.nomh = msim.nomh and hsim.nomm = msim.nomm;
 
 --encontrar parejas parejas casadas que se caen mutuamente simpaticos
 select parejas.nomh, parejas.nomm from matrimonio, (select hsim.nomh,hsim.nomm from hsim, msim where hsim.nomh = msim.nomh and hsim.nomm = msim.nomm) as parejas where parejas.nomh = matrimonio.nomh and parejas.nomm = matrimonio.nomm;
@@ -168,11 +169,15 @@ select parejas.nomh, parejas.nomm from matrimonio, (select hsim.nomh,hsim.nomm f
 select parejas.nomh, parejas.nomm from (select hsim.nomh,hsim.nomm from hsim, msim where hsim.nomh = msim.nomh and hsim.nomm = msim.nomm) as parejas, hombre, mujer  where  hombre.nomh = parejas.nomh and mujer.nomm = parejas.nomm and hombre.edad > 30 and mujer.edad > 30;
 
 --hallar los hombres casados a los que no les cae simpatico su esposa
-
+select nomh from matrimonio where nomh not in (select matrimonio.nomh from hsim, matrimonio where hsim.nomh = matrimonio.nomh and hsim.nomm = matrimonio.nomm);
 
 --hallar mujeres casadas que caen simpaticas a algun hombre
 select matrimonio.nomm from matrimonio, msim where matrimonio.nomm = msim.nomm;
 
 --encontrar los hombres a quienes solo caen simpaticas mujeres casadas
-select hombres_casadas.nomh from(select msim.nomh, msim.nomm from msim, matrimonio where matrimonio.nomm = msim.nomm) as hombres_casadas, 	- hombres les gustan solteras; --faltaaa
-insert into msim values('francisco', 'aida');
+select casadas_y_solteras.nomh from (select msim.nomh, msim.nomm from msim, matrimonio where matrimonio.nomm = msim.nomm) as casadas_y_solteras where casadas_y_solteras.nomh not in ( select solteras.nomh from hsim, (select nomm from mujer where nomm not in (select nomm from matrimonio)) where mujer.nomm = hsim.nomm); 
+
+
+select nomh from (select hsim.nomm, nomh from (select nomm from matrimonio) as casadas, hsim where casadas.nomm = hsim.nomm) as sol_y_cas where sol_y_cas.nomh not in (select nomh from ((select algo.nomm,nomh from hsim, (select nomm from mujer where nomm not in (select nomm from matrimonio)) as algo where algo.nomm = hsim.nomm)) as sol); 
+
+
